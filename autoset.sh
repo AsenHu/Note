@@ -2,7 +2,7 @@
 
 name="$1"
 pass="$2"
-port=22 # $((RANDOM * 8 % 55535 + 10000))
+port="$7"
 swap="512M"
 version="$3"
 sources="$4"
