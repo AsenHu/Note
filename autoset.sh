@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 
-name="asen"
-pass="Asenyyds"
+name="$1"
+pass="$2"
 port=$((RANDOM * 8 % 55535 + 10000))
 swap="512M"
-version="focal"
-# version="jammy"
-sources="archive.ubuntu.com"
-setnet="false"
+version="$3"
+sources="$4"
+cfon="$5"
 
 #换源
 echo -e "deb http://$sources/ubuntu/ $version main restricted universe multiverse\ndeb http://$sources/ubuntu/ $version-security main restricted universe multiverse\ndeb http://$sources/ubuntu/ $version-updates main restricted universe multiverse\ndeb-src http://$sources/ubuntu/ $version main restricted universe multiverse\ndeb-src http://$sources/ubuntu/ $version-security main restricted universe multiverse\ndeb-src http://$sources/ubuntu/ $version-updates main restricted universe multiverse" > /etc/apt/sources.list
@@ -38,20 +37,13 @@ sed -i '/#\?.*PasswordAuthentication.*/d' /etc/ssh/sshd_config
     echo "PubkeyAuthentication yes"
     echo "PasswordAuthentication no"
 } >> /etc/ssh/sshd_config
-mkdir -p /home/$name/.ssh/
-echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFGEpgwG92X5A1p6GrExP9URL6sDQYRcL1w2P9bB2FN4 20230619" > /home/$name/.ssh/authorized_keys
-chown -R "$name" /home/$name/
-chmod 600 /home/$name/.ssh/authorized_keys
+mkdir -p /home/"$name"/.ssh/
+echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFGEpgwG92X5A1p6GrExP9URL6sDQYRcL1w2P9bB2FN4 20230619" > /home/"$name"/.ssh/authorized_keys
+chown -R "$name" /home/"$name"/
+chmod 600 /home/"$name"/.ssh/authorized_keys
 
 #设置时区
 timedatectl set-timezone Asia/Shanghai
-
-# 不复制网卡文件
-if [ "$setnet" == "true" ]
-then
-mkdir -p /etc/netplan/
-echo "$(<./netcfg.yaml)" > /etc/netplan/01-netcfg.yaml
-fi
 
 #设置 swap
 swapoff /swapfile
@@ -68,7 +60,36 @@ sudo ufw default allow outgoing
 sudo ufw default deny incoming
 sudo ufw allow "$port"/tcp
 
-# 不放行 Cloudflare
+# 放行 Cloudflare
+
+if [ "$cfon" == true ]
+then
+
+sudo ufw allow from 173.245.48.0/20 to any port 443 proto tcp
+sudo ufw allow from 103.21.244.0/22 to any port 443 proto tcp
+sudo ufw allow from 103.22.200.0/22 to any port 443 proto tcp
+sudo ufw allow from 103.31.4.0/22 to any port 443 proto tcp
+sudo ufw allow from 141.101.64.0/18 to any port 443 proto tcp
+sudo ufw allow from 108.162.192.0/18 to any port 443 proto tcp
+sudo ufw allow from 190.93.240.0/20 to any port 443 proto tcp
+sudo ufw allow from 188.114.96.0/20 to any port 443 proto tcp
+sudo ufw allow from 197.234.240.0/22 to any port 443 proto tcp
+sudo ufw allow from 198.41.128.0/17 to any port 443 proto tcp
+sudo ufw allow from 162.158.0.0/15 to any port 443 proto tcp
+sudo ufw allow from 104.16.0.0/13 to any port 443 proto tcp
+sudo ufw allow from 104.24.0.0/14 to any port 443 proto tcp
+sudo ufw allow from 172.64.0.0/13 to any port 443 proto tcp
+sudo ufw allow from 131.0.72.0/22 to any port 443 proto tcp
+
+sudo ufw allow from 2400:cb00::/32 to any port 443 proto tcp
+sudo ufw allow from 2606:4700::/32 to any port 443 proto tcp
+sudo ufw allow from 2803:f800::/32 to any port 443 proto tcp
+sudo ufw allow from 2405:b500::/32 to any port 443 proto tcp
+sudo ufw allow from 2405:8100::/32 to any port 443 proto tcp
+sudo ufw allow from 2a06:98c0::/29 to any port 443 proto tcp
+sudo ufw allow from 2c0f:f248::/32 to any port 443 proto tcp
+
+fi
 
 echo -e "Finish."
 echo -e "You are setting username : ${name}"
