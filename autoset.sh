@@ -7,6 +7,7 @@ swap="512M"
 version="$3"
 sources="$4"
 cfon="$5"
+key="$6"
 
 #换源
 echo -e "deb http://$sources/ubuntu/ $version main restricted universe multiverse\ndeb http://$sources/ubuntu/ $version-security main restricted universe multiverse\ndeb http://$sources/ubuntu/ $version-updates main restricted universe multiverse\ndeb-src http://$sources/ubuntu/ $version main restricted universe multiverse\ndeb-src http://$sources/ubuntu/ $version-security main restricted universe multiverse\ndeb-src http://$sources/ubuntu/ $version-updates main restricted universe multiverse" > /etc/apt/sources.list
@@ -38,7 +39,7 @@ sed -i '/#\?.*PasswordAuthentication.*/d' /etc/ssh/sshd_config
     echo "PasswordAuthentication no"
 } >> /etc/ssh/sshd_config
 mkdir -p /home/"$name"/.ssh/
-echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFGEpgwG92X5A1p6GrExP9URL6sDQYRcL1w2P9bB2FN4 20230619" > /home/"$name"/.ssh/authorized_keys
+echo "$key" > /home/"$name"/.ssh/authorized_keys
 chown -R "$name" /home/"$name"/
 chmod 600 /home/"$name"/.ssh/authorized_keys
 
