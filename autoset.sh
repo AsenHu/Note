@@ -52,7 +52,7 @@ sed -i '/^pool.*/d' /etc/chrony/chrony.conf
 sed -i '/^peer.*/d' /etc/chrony/chrony.conf
 sed -i '/^server.*/d' /etc/chrony/chrony.conf
 
-echo server time.cloudflare.com iburst nts >> /etc/chrony/chrony.conf
+echo "server time.cloudflare.com iburst nts" >> /etc/chrony/chrony.conf
 
 #设置 swap
 swapoff /swapfile
