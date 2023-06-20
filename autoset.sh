@@ -13,7 +13,7 @@ key="$6"
 echo -e "deb http://$sources/ubuntu/ $version main restricted universe multiverse\ndeb http://$sources/ubuntu/ $version-security main restricted universe multiverse\ndeb http://$sources/ubuntu/ $version-updates main restricted universe multiverse\ndeb-src http://$sources/ubuntu/ $version main restricted universe multiverse\ndeb-src http://$sources/ubuntu/ $version-security main restricted universe multiverse\ndeb-src http://$sources/ubuntu/ $version-updates main restricted universe multiverse" > /etc/apt/sources.list
 
 #linux-image-cloud-amd64
-apt update && apt upgrade -y
+apt update && apt install chrony -y && apt upgrade -y
 
 #开启bbr
 echo -e "net.core.default_qdisc=fq\nnet.ipv4.tcp_congestion_control=bbr" > /etc/sysctl.conf
@@ -28,10 +28,10 @@ echo "$name ALL=(ALL:ALL) ALL" >> /etc/sudoers
 chmod u-w /etc/sudoers
 
 #端口 关root登录 开启密钥登录
-sed -i "/#\?.*Port.*/d" /etc/ssh/sshd_config
-sed -i '/#\?.*PermitRootLogin.*/d' /etc/ssh/sshd_config
-sed -i '/#\?.*PubkeyAuthentication.*/d' /etc/ssh/sshd_config
-sed -i '/#\?.*PasswordAuthentication.*/d' /etc/ssh/sshd_config
+sed -i "/^[^#]*Port.*/d" /etc/ssh/sshd_config
+sed -i '/^[^#]*PermitRootLogin.*/d' /etc/ssh/sshd_config
+sed -i '/^[^#]*PubkeyAuthentication.*/d' /etc/ssh/sshd_config
+sed -i '/^[^#]*PasswordAuthentication.*/d' /etc/ssh/sshd_config
 {
     echo "Port $port"
     echo "PermitRootLogin no"
@@ -45,6 +45,14 @@ chmod 600 /home/"$name"/.ssh/authorized_keys
 
 #设置时区
 timedatectl set-timezone Asia/Shanghai
+
+# 自动对时
+sed -i "/^[^#]*dhcp.*/d" /etc/chrony/chrony.conf
+sed -i '/^pool.*/d' /etc/chrony/chrony.conf
+sed -i '/^peer.*/d' /etc/chrony/chrony.conf
+sed -i '/^server.*/d' /etc/chrony/chrony.conf
+
+echo server time.cloudflare.com iburst nts >> /etc/chrony/chrony.conf
 
 #设置 swap
 swapoff /swapfile
