@@ -220,19 +220,19 @@ if [ "$system" == debian ]
 then
     if [ "$debian_netmode" == DHCP ]
     then
-        tmp=$(echo "apt install wget -y && bash <(wget --no-check-certificate -qO- 'https://raw.githubusercontent.com/AsenHu/Note/main/debianSet.sh') $name $pass bookworm $debian_sources $debian_secSources $CFIP '$key' $port $debian_netmode $debian_DHCP_IPv4 $debian_DHCP_IPv6 $debian_DNS" |base64 |tr -d "\n")
+        tmp=$(echo "apt install wget -y && bash <(wget --no-check-certificate -qO- 'https://raw.githubusercontent.com/AsenHu/Note/main/debianSet.sh') '$name' '$pass' bookworm $debian_sources $debian_secSources $CFIP '$key' $port $debian_netmode $debian_DHCP_IPv4 $debian_DHCP_IPv6 '$debian_DNS'" |base64 |tr -d "\n")
         bash <(wget --no-check-certificate -qO- 'https://raw.githubusercontent.com/MoeClub/Note/master/InstallNET.sh') -d 12 -v 64 -a --mirror "http://$debian_sources/debian/" -cmd "$tmp"
     fi
 
     if [ "$debian_netmode" == static ]
     then
-        tmp=$(echo "apt install wget -y && bash <(wget --no-check-certificate -qO- 'https://raw.githubusercontent.com/AsenHu/Note/main/debianSet.sh') $name $pass bookworm $debian_sources $debian_secSources $CFIP '$key' $port $debian_netmode ${debian_static_IP[*]} $debian_static_gateway4 $debian_static_gateway6 $debian_DNS" |base64 |tr -d "\n")
+        tmp=$(echo "apt install wget -y && bash <(wget --no-check-certificate -qO- 'https://raw.githubusercontent.com/AsenHu/Note/main/debianSet.sh') '$name' '$pass' bookworm $debian_sources $debian_secSources $CFIP '$key' $port $debian_netmode '${debian_static_IP[*]}' $debian_static_gateway4 $debian_static_gateway6 '$debian_DNS'" |base64 |tr -d "\n")
         bash <(wget --no-check-certificate -qO- 'https://raw.githubusercontent.com/MoeClub/Note/master/InstallNET.sh') -d 12 -v 64 -a --mirror "http://$debian_sources/debian/" -cmd "$tmp"
     fi
 fi
 
 if [ "$system" == ubuntu ]
 then
-    tmp=$(echo "apt install wget -y && bash <(wget --no-check-certificate -qO- 'https://raw.githubusercontent.com/AsenHu/Note/main/ubuntuSet.sh') $name $pass focal $ubuntu_sources $CFIP '$key' $port" |base64 |tr -d "\n")
+    tmp=$(echo "apt install wget -y && bash <(wget --no-check-certificate -qO- 'https://raw.githubusercontent.com/AsenHu/Note/main/ubuntuSet.sh') '$name' '$pass' focal $ubuntu_sources $CFIP '$key' $port" |base64 |tr -d "\n")
     bash <(wget --no-check-certificate -qO- 'https://raw.githubusercontent.com/MoeClub/Note/master/InstallNET.sh') -u 20.04 -v 64 -a --mirror "http://$ubuntu_sources/ubuntu/" -cmd "$tmp"
 fi
