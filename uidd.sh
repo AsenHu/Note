@@ -19,9 +19,9 @@ debian_netmode=DHCP
 debian_DHCP_IPv4=true
 debian_DHCP_IPv6=true
 debian_DNS="1.1.1.1 2606:4700::1111"
-unset debian_static_IP
-unset debian_static_gateway4
-unset debian_static_gateway6
+readarray -t debian_static_IP < <(ip addr | awk '/inet/ {print $2}' | grep -v 127\.0\.0\.1 | grep -v ::1)
+debian_static_gateway4=$(ip route | awk '/default/ {print $3}')
+debian_static_gateway6=$(ip -6 -o route show | awk '/default/ {print $3}')
 CN=false
 
 source ./env.sh
@@ -187,7 +187,7 @@ then
 
     if [ "$debian_netmode" == static ]
     then
-        info "IP" "The IP address of the server. Please separate multiple IP addresses with spaces (including both IPv4 and IPv6). Such as [1.1.1.1/32 2606:4700::1111/128]" false "$debian_static_IP"
+        info "IP" "The IP address of the server. Please separate multiple IP addresses with spaces (including both IPv4 and IPv6). Such as [1.1.1.1 2606:4700::1111]" false "${debian_static_IP[*]}"
         debian_static_IP="$tmp"
 
         unset tmp
