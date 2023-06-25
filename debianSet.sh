@@ -89,7 +89,7 @@ geDHCP(){
     fi
 }
 
-if [ "$netplanMode" == dhcp ]
+if [ "$netplanMode" == DHCP ]
 then
 rm -rf /etc/netplan/
 mkdir -p /etc/netplan/
