@@ -10,11 +10,97 @@ secSources="$5"
 cfon="$6"
 key="$7"
 
+netplanMode="$9"
+netv1="${10}"
+netv2="${11}"
+netv3="${12}"
+netv4="${13}"
+
 #换源
 echo -e "deb http://$sources/debian/ $version main contrib non-free non-free-firmware\ndeb http://$secSources/ $version-security main contrib non-free non-free-firmware\ndeb http://$sources/debian/ $version-updates main contrib non-free non-free-firmware\ndeb-src http://$sources/debian/ $version main contrib non-free non-free-firmware\ndeb-src http://$secSources/ $version-security main contrib non-free non-free-firmware\ndeb-src http://$sources/debian/ $version-updates main contrib non-free non-free-firmware" > /etc/apt/sources.list
 
 #linux-image-cloud-amd64
-apt update && apt install chrony linux-image-cloud-amd64 ca-certificates -y && apt upgrade -y
+apt update && apt install chrony linux-image-cloud-amd64 ca-certificates netplan.io -y && apt upgrade -y
+
+# 配置 netplan
+geNetplan(){
+    local addr gatev4 gatev6 dns i
+    read -r -a addr <<< "$1"
+    gatev4=$2
+    gatev6=$3
+    read -r -a dns <<< "$4"
+    if [ "$gatev4" ] || [ "$gatev6" ]
+    then
+        echo "network:"
+        echo "  version: 2"
+        echo "  renderer: networkd"
+        echo "  ethernets:"
+        echo "    $(ip addr | grep -w inet | grep -v 127\.0\.0\.1 | awk '{print $NF; exit}'):"
+        echo "      addresses:"
+        for i in "${addr[@]}"
+        do
+            echo "        - $i"
+        done
+        echo "      routes:"
+        if [ "$gatev4" ]
+        then
+            echo "        - to: 0.0.0.0/0"
+            echo "          via: $gatev4"
+        fi
+        if [ "$gatev6" ]
+        then
+            echo "        - to: 0.0.0.0/0"
+            echo "          via: $gatev6"
+        fi
+        if [ "${dns[0]}" ]
+        then
+            echo "      nameservers:"
+            echo "        addresses:"
+            for i in "${dns[@]}"
+            do
+                echo "          - $i"
+            done
+        fi
+    else
+        echo "The gateway does not exis."
+    fi
+}
+
+geDHCP(){
+    local dhcp4 dhcp6 dns
+    dhcp4=$1
+    dhcp6=$2
+    read -r -a dns <<< "$3"
+    echo "network:"
+    echo "  version: 2"
+    echo "  renderer: networkd"
+    echo "  ethernets:"
+    echo "    $(ip addr | grep -w inet | grep -v 127\.0\.0\.1 | awk '{print $NF; exit}'):"
+    echo "      dhcp4: $dhcp4"
+    echo "      dhcp6: $dhcp6"
+    if [ "${dns[0]}" ]
+    then
+        echo "      nameservers:"
+        echo "        addresses:"
+        for i in "${dns[@]}"
+        do
+            echo "          - $i"
+        done
+    fi
+}
+
+if [ "$netplanMode" == dhcp ]
+then
+rm -rf /etc/netplan/
+mkdir -p /etc/netplan/
+geDHCP "$netv1" "$netv2" "$netv3" > /etc/netplan/01-netcfg.yaml
+fi
+if [ "$netplanMode" == static ]
+then
+rm -rf /etc/netplan/
+mkdir -p /etc/netplan/
+geNetplan "$netv1" "$netv2" "$netv3" "$netv4" > /etc/netplan/01-netcfg.yaml
+fi
 
 #开启bbr
 echo -e "net.core.default_qdisc=fq\nnet.ipv4.tcp_congestion_control=bbr" > /etc/sysctl.conf
