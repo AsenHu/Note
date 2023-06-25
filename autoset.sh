@@ -28,10 +28,7 @@ echo "$name ALL=(ALL:ALL) ALL" >> /etc/sudoers
 chmod u-w /etc/sudoers
 
 #端口 关root登录 开启密钥登录
-sed -i "/^[^#]*Port.*/d" /etc/ssh/sshd_config
-sed -i '/^[^#]*PermitRootLogin.*/d' /etc/ssh/sshd_config
-sed -i '/^[^#]*PubkeyAuthentication.*/d' /etc/ssh/sshd_config
-sed -i '/^[^#]*PasswordAuthentication.*/d' /etc/ssh/sshd_config
+sed -i "/^Port\|^PermitRootLogin\|^PubkeyAuthentication\|^PasswordAuthentication/d" /etc/ssh/
 {
     echo "Port $port"
     echo "PermitRootLogin no"
@@ -46,13 +43,7 @@ chmod 600 /home/"$name"/.ssh/authorized_keys
 #设置时区
 timedatectl set-timezone Asia/Shanghai
 
-# 自动对时
-sed -i "/^[^#]*dhcp.*/d" /etc/chrony/chrony.conf
-sed -i '/^pool.*/d' /etc/chrony/chrony.conf
-sed -i '/^peer.*/d' /etc/chrony/chrony.conf
-sed -i '/^server.*/d' /etc/chrony/chrony.conf
-
-echo "server time.cloudflare.com iburst nts" >> /etc/chrony/chrony.conf
+# 我不知道怎么在 chrony 3 下启用基于 nts 的自动对时，欢迎大佬 Pull Request
 
 #设置 swap
 swapoff /swapfile
