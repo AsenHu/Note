@@ -24,6 +24,7 @@ debian_static_gateway4=$(ip route | awk '/default/ {print $3}')
 debian_static_gateway6=$(ip -6 -o route show | awk '/default/ {print $3}')
 CN=false
 
+touch ./env.sh
 source ./env.sh
 
 info(){
@@ -188,7 +189,7 @@ then
     if [ "$debian_netmode" == static ]
     then
         info "IP" "The IP address of the server. Please separate multiple IP addresses with spaces (including both IPv4 and IPv6). Such as [1.1.1.1/32 2606:4700::1111/128]" false "${debian_static_IP[*]}"
-        debian_static_IP="$tmp"
+        debian_static_IP=( "$tmp" )
 
         unset tmp
         info "IPv4 Gateway" "All IPv4 traffic will be routed to the gateway." true "$debian_static_gateway4"
@@ -224,7 +225,7 @@ then
 
     if [ "$debian_netmode" == static ]
     then
-        bash <(wget --no-check-certificate -qO- 'https://raw.githubusercontent.com/MoeClub/Note/master/InstallNET.sh') -d 12 -v 64 -a --mirror "http://$debian_sources/debian/" -cmd "apt install wget -y && $(echo "bash <(wget --no-check-certificate -qO- 'https://raw.githubusercontent.com/AsenHu/Note/main/debianSet.sh') $name $pass bookworm $debian_sources $debian_secSources $CFIP '$key' $port $debian_netmode $debian_static_IP $debian_static_gateway4 $debian_static_gateway6 $debian_DNS" |base64 |tr -d "\n")"
+        bash <(wget --no-check-certificate -qO- 'https://raw.githubusercontent.com/MoeClub/Note/master/InstallNET.sh') -d 12 -v 64 -a --mirror "http://$debian_sources/debian/" -cmd "apt install wget -y && $(echo "bash <(wget --no-check-certificate -qO- 'https://raw.githubusercontent.com/AsenHu/Note/main/debianSet.sh') $name $pass bookworm $debian_sources $debian_secSources $CFIP '$key' $port $debian_netmode ${debian_static_IP[*]} $debian_static_gateway4 $debian_static_gateway6 $debian_DNS" |base64 |tr -d "\n")"
     fi
 fi
 
