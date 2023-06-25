@@ -187,7 +187,7 @@ then
 
     if [ "$debian_netmode" == static ]
     then
-        info "IP" "The IP address of the server. Please separate multiple IP addresses with spaces (including both IPv4 and IPv6). Such as [1.1.1.1 2606:4700::1111]" false "$debian_static_IP"
+        info "IP" "The IP address of the server. Please separate multiple IP addresses with spaces (including both IPv4 and IPv6). Such as [1.1.1.1/32 2606:4700::1111/128]" false "$debian_static_IP"
         debian_static_IP="$tmp"
 
         unset tmp
