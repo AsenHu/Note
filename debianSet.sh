@@ -194,4 +194,4 @@ rm -rf ./autoset.sh
 
 #开启防火墙断开当前连接
 echo y | sudo ufw enable
-sudo reboot
+reboot
