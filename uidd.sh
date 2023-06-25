@@ -24,7 +24,7 @@ unset debian_static_gateway4
 unset debian_static_gateway6
 CN=false
 
-$1
+source ./env.sh
 
 info(){
     local vName tip isNul default
