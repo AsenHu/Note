@@ -95,7 +95,7 @@ name="$tmp"
 info "Password" "The password entered when using the sudo command." false "$pass"
 pass="$tmp"
 
-info "Public key" "When logging into the server, the public key is used by the server to authenticate the user's identity." false
+info "Public key" "When logging into the server, the public key is used by the server to authenticate the user's identity." false "$key"
 key="$tmp"
 
 info "SSH Port" "The port on which the SSH service is listening." false "$port"
@@ -187,18 +187,18 @@ then
 
     if [ "$debian_netmode" == static ]
     then
-        info "IP" "The IP address of the server. Please separate multiple IP addresses with spaces (including both IPv4 and IPv6). Such as [1.1.1.1 2606:4700::1111]" false
+        info "IP" "The IP address of the server. Please separate multiple IP addresses with spaces (including both IPv4 and IPv6). Such as [1.1.1.1 2606:4700::1111]" false "$debian_static_IP"
         debian_static_IP="$tmp"
 
         unset tmp
-        info "IPv4 Gateway" "All IPv4 traffic will be routed to the gateway." true
+        info "IPv4 Gateway" "All IPv4 traffic will be routed to the gateway." true "$debian_static_gateway4"
         if [ "$tmp" ]
         then
             debian_static_gateway4="$tmp"
         fi
 
         unset tmp
-        info "IPv6 Gateway" "All IPv6 traffic will be routed to the gateway." true
+        info "IPv6 Gateway" "All IPv6 traffic will be routed to the gateway." true "$debian_static_gateway6"
         if [ "$tmp" ]
         then
             debian_static_gateway6="$tmp"
