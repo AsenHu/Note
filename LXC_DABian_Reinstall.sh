@@ -118,7 +118,7 @@ rm -rvf /x
 echo -e "$pass\n$pass\n" | passwd
 
 apt update
-apt install openssh-server openvswitch-switch netplan.io chrony ca-certificates sudo ufw -y
+apt install openssh-server openvswitch-switch netplan.io ca-certificates sudo ufw -y
 apt upgrade -y
 
 # 配置系统
@@ -148,9 +148,8 @@ chmod 600 /home/"$name"/.ssh/authorized_keys
 #设置时区
 timedatectl set-timezone Asia/Shanghai
 
-# 自动对时
-sed -i "/dhcp\|^pool\|^peer\|^server/d" /etc/chrony/chrony.conf
-echo "server time.cloudflare.com iburst nts" >> /etc/chrony/chrony.conf
+# 自动对不了时
+# 修改时间需要操作内核空间，LXC 不具备操作内核空间的权限
 
 # LXC 通常由宿主机分配 SWAP 且无法删除，如有需要自行增加 SWAP
 # 我也不知道能不能加
