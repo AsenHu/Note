@@ -87,6 +87,7 @@ if [ "$tmp" -lt 1 ] || [ "$tmp" -gt 65535 ]
 then
     gOut 1
 fi
+port="$tmp"
 
 info "CFIP" "Allow Cloudflare to access your 443 port using the TCP protocol." false "$CFIP"
 if [ "$tmp" == true ] || [ "$tmp" == t ]
