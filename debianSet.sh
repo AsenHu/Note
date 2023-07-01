@@ -102,6 +102,8 @@ mkdir -p /etc/netplan/
 geNetplan "$netv1" "$netv2" "$netv3" "$netv4" > /etc/netplan/01-netcfg.yaml
 fi
 
+chmod 600 /etc/netplan/01-netcfg.yaml
+
 #开启bbr
 echo -e "net.core.default_qdisc=fq\nnet.ipv4.tcp_congestion_control=bbr" > /etc/sysctl.conf
 
