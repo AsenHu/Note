@@ -49,7 +49,7 @@ geNetplan(){
         fi
         if [ "$gatev6" ]
         then
-            echo "        - to: 0.0.0.0/0"
+            echo "        - to: ::/0"
             echo "          via: $gatev6"
         fi
         if [ "${dns[0]}" ]
