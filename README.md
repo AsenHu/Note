@@ -21,6 +21,14 @@ echo -e "name=asen\npass=Asenyyds" > env.sh && bash <(wget --no-check-certificat
 
 ~~`$2` 是传到萌咖脚本上的，用于特殊用途，比如你的服务器是纯 IPv6 的，萌咖脚本会获取不到你的 IP 地址，这时候你就要附加类似这样的东西 `bash uidd.sh "" "--ip-addr 2001:bc8:62c:233::1/64 --ip-gate 2001:bc8:62c:233:: --ip-mask 255.255.255.254 --ip-dns 2001:67c:2b0::4"` 来给萌咖指定 IP 网关 DNS 啥的，让它可以 dd 系统。这里 `$1` 如果你啥都不想写就写 `""`，不然 `$2` 就会变成 `$1`~~ 我还用不上这个东西，有需要的人 Pull Request 吧
 
+# LXCuidd
+
+自己搓了个 LXC 的重装脚本，原理是替换用户空间。它和 `uidd.sh` 一样使用 `env.sh` 来传参
+
+```bash
+bash <(wget --no-check-certificate -qO- 'https://raw.githubusercontent.com/AsenHu/Note/main/LXCuidd.sh')
+```
+
 dd Debian 12
 
 ```
