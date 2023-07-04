@@ -192,6 +192,7 @@ sudo ufw allow from 2c0f:f248::/32 to any port 443 proto tcp
 
 fi
 
+echo "================================================================"
 echo -e "Finish."
 echo -e "You are setting username : ${name}"
 echo -e "You are setting password : $pass for ${name}"
@@ -202,4 +203,11 @@ rm -rf ./autoset.sh
 
 #开启防火墙断开当前连接
 echo y | sudo ufw enable
-reboot
+
+echo "Shall we now initiate the process of rebooting the system? [yes/no]"
+read -r tmp
+
+if [ "$tmp" == yes ]
+then
+    reboot
+fi
