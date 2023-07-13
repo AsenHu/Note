@@ -25,6 +25,7 @@ rm -rvf /x /rootfs.tar.xz
 mkdir -p /x
 wget "https://images.linuxcontainers.org/$path/rootfs.tar.xz"
 tar -C /x -xvf rootfs.tar.xz
+rm -rvf /rootfs.tar.xz
 
 echo -e "deb http://$sources/debian/ $version main contrib non-free non-free-firmware\ndeb http://$secSources/ $version-security main contrib non-free non-free-firmware\ndeb http://$sources/debian/ $version-updates main contrib non-free non-free-firmware\ndeb-src http://$sources/debian/ $version main contrib non-free non-free-firmware\ndeb-src http://$secSources/ $version-security main contrib non-free non-free-firmware\ndeb-src http://$sources/debian/ $version-updates main contrib non-free non-free-firmware" > /x/etc/apt/sources.list
 
