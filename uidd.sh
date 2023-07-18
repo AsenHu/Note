@@ -172,7 +172,7 @@ then
             debian_DHCP_IPv4=false
         fi
 
-        info "DHCPv4" "Enable DHCP for IPv6. [t/f]" false "$debian_DHCP_IPv6"
+        info "DHCPv6" "Enable DHCP for IPv6. [t/f]" false "$debian_DHCP_IPv6"
         if [ "$tmp" == true ] || [ "$tmp" == t ]
         then
             debian_DHCP_IPv6=true
