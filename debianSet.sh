@@ -19,9 +19,6 @@ netv4="${13}"
 #换源
 echo -e "deb http://$sources/debian/ $version main contrib non-free non-free-firmware\ndeb http://$secSources/ $version-security main contrib non-free non-free-firmware\ndeb http://$sources/debian/ $version-updates main contrib non-free non-free-firmware\ndeb-src http://$sources/debian/ $version main contrib non-free non-free-firmware\ndeb-src http://$secSources/ $version-security main contrib non-free non-free-firmware\ndeb-src http://$sources/debian/ $version-updates main contrib non-free non-free-firmware" > /etc/apt/sources.list
 
-#linux-image-cloud-amd64
-apt update && apt install chrony linux-image-cloud-amd64 openvswitch-switch ca-certificates netplan.io sudo ufw -y && apt upgrade -y
-
 # 配置 netplan
 geNetplan(){
     local addr gatev4 gatev6 dns i
@@ -103,6 +100,11 @@ geNetplan "$netv1" "$netv2" "$netv3" "$netv4" > /etc/netplan/01-netcfg.yaml
 fi
 
 chmod 600 /etc/netplan/01-netcfg.yaml
+
+netplan apply
+
+#linux-image-cloud-amd64
+apt update && apt install chrony linux-image-cloud-amd64 openvswitch-switch ca-certificates netplan.io sudo ufw -y && apt upgrade -y
 
 #开启bbr
 echo -e "net.core.default_qdisc=fq\nnet.ipv4.tcp_congestion_control=bbr" > /etc/sysctl.conf
