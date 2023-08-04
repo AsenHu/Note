@@ -15,7 +15,7 @@ CFIP=false
 debian_netmode=DHCP
 debian_DHCP_IPv4=true
 debian_DHCP_IPv6=true
-debian_DNS="1.1.1.1 2606:4700::1111"
+debian_DNS="1.1.1.1 2606:4700:4700::1111"
 readarray -t debian_static_IP < <(ip addr | awk '/inet/ {print $2}' | grep -v 127\.0\.0\.1 | grep -v ::1)
 debian_static_gateway4=$(ip route | awk '/default/ {print $3}')
 debian_static_gateway6=$(ip -6 -o route show | awk '/default/ {print $3}')
