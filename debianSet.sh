@@ -201,8 +201,6 @@ echo -e "You are setting password : $pass for ${name}"
 echo -e "You are setting port : $port"
 echo -e "The firewall is enabled, please change the port after this session ends."
 
-rm -rf ./autoset.sh
-
 #开启防火墙断开当前连接
 echo y | sudo ufw enable
 reboot
