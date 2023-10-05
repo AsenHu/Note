@@ -119,7 +119,7 @@ rm -rvf /x
 echo -e "$pass\n$pass\n" | passwd
 
 apt update
-apt install openssh-server openvswitch-switch netplan.io ca-certificates sudo ufw -y
+apt install openssh-server openvswitch-switch netplan.io ca-certificates sudo ufw systemd-resolved -y
 apt upgrade -y
 
 # 配置系统
