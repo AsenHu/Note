@@ -113,8 +113,9 @@ apt update && apt install chrony linux-image-cloud-amd64 openvswitch-switch ca-c
 
 netplan apply
 
-#开启bbr
-echo -e "net.core.default_qdisc=fq\nnet.ipv4.tcp_congestion_control=bbr" > /etc/sysctl.conf
+#开启bbr 和 TFO
+mkdir -p /etc/sysctl.d
+echo -e "net.core.default_qdisc=fq\nnet.ipv4.tcp_congestion_control=bbr\nnet.ipv4.tcp_fastopen=3" > /etc/sysctl.d/01-bbr_tfo.conf
 
 #创建账户设置密码
 echo -e "$pass\n$pass\n\n\n\n\n\ny" | adduser "$name"
