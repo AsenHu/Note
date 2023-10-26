@@ -8,13 +8,13 @@
 它现在是交互式的了，因为我发现传参的方式真的太不方便了
 
 ```bash
-bash <(wget --no-check-certificate -qO- 'https://raw.githubusercontent.com/AsenHu/Note/main/uidd.sh')
+bash <(curl 'https://raw.githubusercontent.com/AsenHu/Note/main/uidd.sh')
 ```
 
 不过你可以给他设置默认值，如果同级目录下有 `env.sh`，就会用 `env.sh` 覆盖默认的值，这意味着你可以这样写来实现类似传参的玩法。
 
 ```bash
-echo -e "name=asen\npass=Asenyyds" > env.sh && bash <(wget --no-check-certificate -qO- 'https://raw.githubusercontent.com/AsenHu/Note/main/uidd.sh')
+echo -e "name=asen\npass=Asenyyds" > env.sh && bash <(curl 'https://raw.githubusercontent.com/AsenHu/Note/main/uidd.sh')
 ```
 
 它会将默认的用户名设置为 `asen`，默认密码设置为 `Asenyyds`
@@ -26,7 +26,7 @@ echo -e "name=asen\npass=Asenyyds" > env.sh && bash <(wget --no-check-certificat
 自己搓了个 LXC 的重装脚本，原理是替换用户空间。它和 `uidd.sh` 一样使用 `env.sh` 来传参
 
 ```bash
-bash <(wget --no-check-certificate -qO- 'https://raw.githubusercontent.com/AsenHu/Note/main/LXCuidd.sh')
+bash <(curl 'https://raw.githubusercontent.com/AsenHu/Note/main/LXCuidd.sh')
 ```
 
 # CaddyCDN
@@ -40,5 +40,5 @@ caddy 编译安装脚本，需要 root 运行。脚本里指定需要编译的�
 dd Debian 12
 
 ```
-bash <(wget --no-check-certificate -qO- 'https://raw.githubusercontent.com/MoeClub/Note/master/InstallNET.sh') -d 12 -v 64 -a --mirror 'http://deb.debian.org/debian/'
+bash <(curl 'https://raw.githubusercontent.com/MoeClub/Note/master/InstallNET.sh') -d 12 -v 64 -a --mirror 'http://deb.debian.org/debian/'
 ```
