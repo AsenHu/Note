@@ -192,11 +192,11 @@ if [ "$system" == debian ]
 then
     if [ "$debian_netmode" == DHCP ]
     then
-        bash <(wget --no-check-certificate -qO- 'https://raw.githubusercontent.com/AsenHu/Note/main/LXC_DABian_Reinstall.sh') "$name" "$pass" bookworm "$debian_sources" "$debian_secSources" "$CFIP" "$key" "$port" "$debian_netmode" "$debian_DHCP_IPv4" "$debian_DHCP_IPv6" "$debian_DNS"
+        bash <(curl -L -q --retr 5 --retry-delay 10 --retry-max-time 60 'https://raw.githubusercontent.com/AsenHu/Note/main/LXC_DABian_Reinstall.sh') "$name" "$pass" bookworm "$debian_sources" "$debian_secSources" "$CFIP" "$key" "$port" "$debian_netmode" "$debian_DHCP_IPv4" "$debian_DHCP_IPv6" "$debian_DNS"
     fi
 
     if [ "$debian_netmode" == static ]
     then
-        bash <(wget --no-check-certificate -qO- 'https://raw.githubusercontent.com/AsenHu/Note/main/LXC_DABian_Reinstall.sh') "$name" "$pass" bookworm "$debian_sources" "$debian_secSources" "$CFIP" "$key" "$port" "$debian_netmode" "${debian_static_IP[*]}" "$debian_static_gateway4" "$debian_static_gateway6" "$debian_DNS"
+        bash <(curl -L -q --retr 5 --retry-delay 10 --retry-max-time 60 'https://raw.githubusercontent.com/AsenHu/Note/main/LXC_DABian_Reinstall.sh') "$name" "$pass" bookworm "$debian_sources" "$debian_secSources" "$CFIP" "$key" "$port" "$debian_netmode" "${debian_static_IP[*]}" "$debian_static_gateway4" "$debian_static_gateway6" "$debian_DNS"
     fi
 fi
