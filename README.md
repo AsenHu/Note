@@ -29,16 +29,18 @@ echo -e "name=asen\npass=Asenyyds" > env.sh && bash <(curl 'https://raw.githubus
 bash <(curl 'https://raw.githubusercontent.com/AsenHu/Note/main/LXCuidd.sh')
 ```
 
-# CaddyCDN
+# ~~CaddyCDN~~
 
-caddy 编译安装脚本，需要 root 运行。脚本里指定需要编译的模块，默认编译 DNS 验证的模块。会安装 xcaddy 和 go 用于构建 caddy，go 放在 /root，以后会改和脚本同目录。xcaddy 是通过包管理器安装的。
+在 https://github.com/AsenHu/rootless_caddy_manager 重构了
 
-当 caddy 是最新版本时，重复运行不会编译而是直接退出，用 crontab 定时运行可以保证自动更新最新的 caddy。
+~~caddy 编译安装脚本，需要 root 运行。脚本里指定需要编译的模块，默认编译 DNS 验证的模块。会安装 xcaddy 和 go 用于构建 caddy，go 放在 /root，以后会改和脚本同目录。xcaddy 是通过包管理器安装的。~~
 
-已知问题：如果编译的时候，没从 caddy 网站上正确的把 systemd 文件拉取下来，直到下次更新前都不会再拉取了，然后 caddy 关掉之后就会再也起不来。短期内解决方法是把 /bin/caddy 删掉，然后再运行一次编译脚本，以后会修。
+~~当 caddy 是最新版本时，重复运行不会编译而是直接退出，用 crontab 定时运行可以保证自动更新最新的 caddy。~~
 
-dd Debian 12
+~~已知问题：如果编译的时候，没从 caddy 网站上正确的把 systemd 文件拉取下来，直到下次更新前都不会再拉取了，然后 caddy 关掉之后就会再也起不来。短期内解决方法是把 /bin/caddy 删掉，然后再运行一次编译脚本，以后会修。~~
+
+# dd Debian 12
 
 ```
-bash <(curl 'https://raw.githubusercontent.com/MoeClub/Note/master/InstallNET.sh') -d 12 -v 64 -a --mirror 'http://deb.debian.org/debian/'
+bash <(curl -L -q --retr 5 --retry-delay 10 --retry-max-time 60 'https://raw.githubusercontent.com/MoeClub/Note/master/InstallNET.sh') -d 12 -v 64 -a --mirror 'http://deb.debian.org/debian/'
 ```
