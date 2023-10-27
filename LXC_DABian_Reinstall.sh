@@ -17,13 +17,13 @@ netv4="${13}"
 
 # 重装
 apt update
-apt install -y curl sed gawk wget gzip rsync xz-utils virt-what
+apt install -y curl sed gawk gzip rsync xz-utils virt-what
 
-path=$(wget -qO- https://images.linuxcontainers.org/meta/1.0/index-system | grep default | awk '-F;' '(( $1=="debian") && ( $3=="amd64" )) {print $NF}' | head -n 1)
+path=$(curl -L -q --retr 5 --retry-delay 10 --retry-max-time 60 https://images.linuxcontainers.org/meta/1.0/index-system | grep default | awk '-F;' '(( $1=="debian") && ( $3=="amd64" )) {print $NF}' | head -n 1)
 cd /
 rm -rvf /x /rootfs.tar.xz
 mkdir -p /x
-wget "https://images.linuxcontainers.org/$path/rootfs.tar.xz"
+curl -L -q --retr 5 --retry-delay 10 --retry-max-time 60 -o ./rootfs.tar.xz "https://images.linuxcontainers.org/$path/rootfs.tar.xz"
 tar -C /x -xvf rootfs.tar.xz
 rm -rvf /rootfs.tar.xz
 
