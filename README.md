@@ -44,3 +44,9 @@ bash <(curl -L -q --retr 5 --retry-delay 10 --retry-max-time 60 'https://raw.git
 ```
 bash <(curl -L -q --retry 5 --retry-delay 10 --retry-max-time 60 'https://raw.githubusercontent.com/MoeClub/Note/master/InstallNET.sh') -d 12 -v 64 -a --mirror 'http://deb.debian.org/debian/'
 ```
+
+# 获取一个一天中随机一个时间的 crontab
+
+```
+echo "$((RANDOM % 60)) $((RANMOD % 24)) * * *"
+```
