@@ -48,5 +48,5 @@ bash <(curl -L -q --retry 5 --retry-delay 10 --retry-max-time 60 'https://raw.gi
 # 获取一个一天中随机一个时间的 crontab
 
 ```
-echo "$((RANDOM % 60)) $((RANMOD % 24)) * * *"
+echo "$((RANDOM % 60)) $((RANDOM % 24)) * * *"
 ```
