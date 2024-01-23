@@ -32,6 +32,7 @@ uuid=$(dir_to_uuid /)
     cat << EOF
 search --no-floppy --set=root --fs-uuid $uuid
 loopback loop /mini.iso
+set root=(loop)
 set timeout=-1
 EOF
     cat /x/boot/grub/grub.cfg
