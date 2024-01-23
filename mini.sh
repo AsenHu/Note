@@ -39,5 +39,4 @@ EOF
 } > /boot/grub/grub.cfg
 
 clear
-echo "uuid=$uuid"
 echo -e "Use 'reboot' to start installation.\nAfter reboot, continue installation in the VNC."
