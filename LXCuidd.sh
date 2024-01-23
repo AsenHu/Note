@@ -23,6 +23,8 @@ path=$(curl https://images.linuxcontainers.org/meta/1.0/index-system | grep defa
 curl -o ./rootfs.tar.xz "https://images.linuxcontainers.org/$path/rootfs.tar.xz"
 tar -C /x -xvf rootfs.tar.xz
 
+clear
+
 echo "What's your username?"
 ls /home
 read -r user
@@ -41,6 +43,7 @@ fi
 
 echo "Set your public key for SSH."
 read -r -p "Press Enter to continue..."
+mkdir /x/home/"$user"
 mkdir /x/home/"$user"/.ssh
 nano /x/home/"$user"/.ssh/authorized_keys
 chmod 600 /x/home/"$user"/.ssh/authorized_keys
@@ -158,6 +161,7 @@ apt upgrade -y
 
 # 创建账户设置密码
 echo -e "$password\n$password\n\n\n\n\n\ny" | adduser "$user"
+chown -R "$user":"$user" /home/"$user"
 
 # visudo
 chmod 777 /etc/sudoers
