@@ -16,7 +16,12 @@ dir_to_uuid() {
 }
 
 rm -rvf /x /mini.iso
-curl -o /mini.iso https://deb.debian.org/debian/dists/bookworm/main/installer-amd64/current/images/netboot/mini.iso
+if $1
+then
+    mv -f "$1" /mini.iso
+else
+    curl -o /mini.iso https://deb.debian.org/debian/dists/bookworm/main/installer-amd64/current/images/netboot/mini.iso
+fi
 
 mkdir -p /x
 mount -o loop /mini.iso /x
@@ -32,5 +37,6 @@ EOF
     cat /x/boot/grub/grub.cfg
 } > /boot/grub/grub.cfg
 
-clean
+clear
+echo "uuid=$uuid"
 echo -e "Use 'reboot' to start installation.\nAfter reboot, continue installation in the VNC."
