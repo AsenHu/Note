@@ -40,7 +40,7 @@ hd=$(dir_to_hd /)
 
 {
     cat << EOF
-loopback loop $hd
+loopback loop $hd/mini.iso
 set timeout=-1
 set root=(loop)
 EOF
