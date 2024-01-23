@@ -39,10 +39,10 @@ echo -e "name=asen\npass=Asenyyds" > env.sh && bash <(curl -L -q --retry 5 --ret
 
 # LXCuidd
 
-自己搓了个 LXC 的重装脚本，原理是替换用户空间。它和 `uidd.sh` 一样使用 `env.sh` 来传参
+自己搓了个 LXC 的重装脚本，原理是替换用户空间。~~它和 `uidd.sh` 一样使用 `env.sh` 来传参~~重写了
 
 ```bash
-bash <(curl -L -q --retry 5 --retry-delay 10 --retry-max-time 60 'https://raw.githubusercontent.com/AsenHu/Note/main/LXCuidd.sh')
+bash <(curl 'https://raw.githubusercontent.com/AsenHu/Note/main/LXCuidd.sh' -L -q --retry 5 --retry-delay 10 --retry-max-time 60)
 ```
 
 # ~~CaddyCDN~~
