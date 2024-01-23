@@ -1,6 +1,14 @@
 # Note
 一个 Bash 笔记本
 
+# mini.sh
+
+Debian 12 一键 VNC 全手动安装
+
+```bash
+bash <(curl https://raw.githubusercontent.com/AsenHu/Note/main/mini.sh -L -q --retry 5 --retry-delay 10 --retry-max-time 60)
+```
+
 # uidd
 
 在用萌咖大佬的脚本 dd 完之后，自动创建用户设置密码还有防火墙这些玩意
