@@ -16,7 +16,7 @@ dir_to_uuid() {
 }
 
 rm -rvf /x /mini.iso
-if $1
+if [ -f "$1" ]
 then
     mv -f "$1" /mini.iso
 else
