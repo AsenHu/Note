@@ -1,202 +1,226 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-# 变量名
-
-system=debian
-name=user
-pass=$(echo $RANDOM | md5sum | cut -d " " -f1) 
-unset key
+source=deb.debian.org/debian
+secSource=security.debian.org/debian-security
+CFIP=na
 port=$((RANDOM * 8 % 55535 + 10000))
-debian_sources_CN=mirrors.tencent.com
-debian_sources_ALL=deb.debian.org
-debian_secSources_CN=mirrors.tencent.com/debian
-debian_secSources_ALL=security.debian.org/debian-security
-CFIP=false
-debian_netmode=DHCP
-debian_DHCP_IPv4=true
-debian_DHCP_IPv6=true
-debian_DNS="1.1.1.1 2606:4700:4700::1111"
-readarray -t debian_static_IP < <(ip addr | awk '/inet/ {print $2}' | grep -v 127\.0\.0\.1 | grep -v ::1)
-debian_static_gateway4=$(ip route | awk '/default/ {print $3}')
-debian_static_gateway6=$(ip -6 -o route show | awk '/default/ {print $3}')
-CN=false
 
-touch ./env.sh
-source ./env.sh
-
-info(){
-    local vName tip isNul default
-    echo -e "\n\n\n\n----------------------------------------------------------------"
-    vName=$1
-    tip=$2
-    isNul=$3
-    default=$4
-    while true
-    do
-        echo "You are setting the value of $vName."
-        echo "$tip"
-        if [ "$default" ]
-        then
-            echo "The default value of $vName is \"$default\"."
-        fi
-        echo "Please confirm by pressing enter after inputting the value."
-        read -r tmp
-        if [ "$tmp" ]
-        then
-            echo "You have entered \"$tmp\"."
-            break
-        else
-            if [ "$default" ]
-            then
-                echo "Utilize the default value \"$default\"."
-                tmp="$default"
-                break
-            else
-                if [ "$isNul" == true ]
-                then
-                    echo "This option utilizes a null value."
-                    break
-                else
-                    echo -e "\n\n========This value cannot be left blank.========"
-                fi
-            fi
-        fi
-    done
+curl() {
+    # Copy from https://github.com/XTLS/Xray-install
+    if ! $(type -P curl) -L -q --retry 5 --retry-delay 10 --retry-max-time 60 "$@";then
+        echo "ERROR:Curl Failed, check your network"
+        exit 1
+    fi
 }
 
-gOut(){
-    echo "I'm sorry, I cannot proceed as your input is invalid."
-    exit "$1"
-}
-
-info "login name" "The name used for logging into the system cannot be root." false "$name"
-if [ "$tmp" == root ]
-then
-    gOut 1
+echo "What's your username?"
+ls /home
+read -r user
+if [ -z "$user" ]; then
+    echo "ERROR:Username is empty"
+    exit 1
 fi
-name="$tmp"
+echo "Hello, $user"
 
-info "Password" "The password entered when using the sudo command." false "$pass"
-pass="$tmp"
-
-info "Public key" "When logging into the server, the public key is used by the server to authenticate the user's identity." false "$key"
-key="$tmp"
-
-info "SSH Port" "The port on which the SSH service is listening." false "$port"
-if [ "$tmp" -lt 1 ] || [ "$tmp" -gt 65535 ]
-then
-    gOut 1
+echo "What's your password?"
+read -r password
+if [ -z "$password" ]; then
+    echo "ERROR:Password is empty"
+    exit 1
 fi
-port="$tmp"
 
-info "CFIP" "Allow Cloudflare to access your 443 port using the TCP protocol." false "$CFIP"
-if [ "$tmp" == true ] || [ "$tmp" == t ]
-then
-    CFIP=true
-else
+echo "Set your public key for SSH."
+read -r -p "Press Enter to continue..."
+mkdir /x/home/"$user"/.ssh
+nano /x/home/"$user"/.ssh/authorized_keys
+chmod 600 /x/home/"$user"/.ssh/authorized_keys
+chown "$user":"$user" /x/home/"$user"/.ssh/authorized_keys
+
+echo "Are you in China? (y/N)"
+read -r inChina
+if [ "$inChina" = "y" ]; then
+    source=mirrors.ustc.edu.cn/debian
+    secSource=mirrors.ustc.edu.cn/debian-security
     CFIP=false
 fi
 
-info "CN" "Is this server located in China?" false "$CN"
-if [ "$tmp" == true ] || [ "$tmp" == t ]
+echo -e "A random port number prevents scanning. How about \"$port\"?\nYou can enter a port or press Enter to accept the port.\nEnter \"more\" to get a new random port."
+while true
+do
+    read -r tmp
+    if [ "$tmp" == more ]
+    then
+        port=$((RANDOM * 8 % 55535 + 10000))
+        echo "How about \"$port\"?"
+    elif [ ! "$tmp" ] && [ "$port" -ge 1 ] && [ "$port" -le 65535 ]
+    then
+        echo "\"$port\" is a good choice!"
+        break
+    elif [ "$tmp" -ge 1 ] && [ "$tmp" -le 65535 ]
+    then
+        port="$tmp"
+        echo "\"$port\" is a good choice!"
+        break
+    else
+        port=$((RANDOM * 8 % 55535 + 10000))
+        echo "\"$tmp\" doesn't seem to be a port. How about \"$port\"?"
+    fi
+done
+
+if [ "$CFIP" == na ]
 then
-    CN=true
-else
-    CN=false
+    echo "Do you want to use Cloudflare CDN? (y/n)"
+    read -r CFIP
+    if [ "$CFIP" = "y" ]
+    then
+        CFIP=true
+    else
+        CFIP=false
+    fi
 fi
 
-if [ "$system" == debian ]
+echo "Let's set your netplan!"
+mkdir /x/etc/netplan
+{
+    cat <<EOF
+network:
+    version: 2
+    renderer: networkd
+    ethernets:
+        eth0:
+            addresses:
+                - 1.2.3.4/24
+                - 1::1/64
+            routes:
+                - to: default
+                  via: 5.6.7.8
+                - to: default
+                  via: 5::5
+                  on-link: true
+            dhcp4: true
+            dhcp6: true
+            accept-ra: true
+            ipv6-privacy: true
+            nameservers:
+                addresses:
+                    - 1.1.1.1
+                    - 2606:4700:4700::1111
+                    - 223.5.5.5
+                    - 2400:3200::1
+EOF
+ip a
+ip route
+ip -6 route
+} > /x/etc/netplan/01-netcfg.yaml
+sed -i 's/^/# /' /x/etc/netplan/01-netcfg.yaml
+read -r -p "Press Enter to continue..."
+nano /x/etc/netplan/01-netcfg.yaml
+sed -i '/^#/d;/^$/d' /x/etc/netplan/01-netcfg.yaml
+chmod 600 /x/etc/netplan/01-netcfg.yaml
+rm -rvf /x/etc/resolv.conf
+cat >> /x/etc/resolv.conf << EOF
+nameserver 1.1.1.1
+nameserver 223.5.5.5
+EOF
+
+echo "Let's start!"
+read -r -p "Press Enter to continue..."
+
+apt update
+apt install -y curl sed gawk gzip rsync xz-utils virt-what
+
+cd /
+rm -rvf /x /rootfs.tar.xz
+mkdir -p /x
+path=$(curl https://images.linuxcontainers.org/meta/1.0/index-system | grep default | awk '-F;' '(( $1=="debian") && ( $3=="amd64" )) {print $NF}' | head -n 1)
+curl -o ./rootfs.tar.xz "https://images.linuxcontainers.org/$path/rootfs.tar.xz"
+tar -C /x -xvf rootfs.tar.xz
+
+sed -i '/^#/!s/^/# /' /x/etc/apt/sources.list
+mkdir -p /x/etc/apt/sources.list.d/
+cat >> /x/etc/apt/sources.list.d/init-sources.list << EOF
+deb http://$source/ bookworm main contrib non-free non-free-firmware
+deb http://$secSource/ bookworm-security main contrib non-free non-free-firmware
+deb http://$source/ bookworm-updates main contrib non-free non-free-firmware
+deb-src http://$source/ bookworm main contrib non-free non-free-firmware
+deb-src http://$secSource/ bookworm-security main contrib non-free non-free-firmware
+deb-src http://$source/ bookworm-updates main contrib non-free non-free-firmware
+EOF
+
+rsync -a -v --delete-after --ignore-times --exclude="/dev" --exclude="/proc" --exclude="/sys" --exclude="/x" --exclude="/run" /x/* /
+rm -rvf /x
+
+echo -e "$password\n$password\n" | passwd
+
+apt update
+apt install openssh-server openvswitch-switch netplan.io ca-certificates sudo ufw systemd-resolved -y
+apt upgrade -y
+
+# 创建账户设置密码
+echo -e "$password\n$password\n\n\n\n\n\ny" | adduser "$user"
+
+# visudo
+chmod 777 /etc/sudoers
+echo "$user ALL=(ALL:ALL) ALL" >> /etc/sudoers
+chmod 440 /etc/sudoers
+
+# SSH
+mkdir -p /etc/ssh/sshd_config.d
+cat > /etc/ssh/sshd_config.d/01-init.conf << EOF
+Port $port
+PermitRootLogin no
+PasswordAuthentication no
+PubkeyAuthentication yes
+EOF
+
+# 设置时区
+timedatectl set-timezone Asia/Shanghai
+
+# 防火墙操作
+ufw disable
+echo y | ufw reset
+ufw default allow outgoing
+ufw default deny incoming
+ufw allow "$port"/tcp
+
+# 放行 Cloudflare
+
+if [ "$CFIP" == true ]
 then
-    if [ "$CN" == true ]
-    then
-        tmp="$debian_sources_CN"
-    else
-        tmp="$debian_sources_ALL"
-    fi
-    info "APT software repository" "It refers to the APT software repository, and I am unsure how to elaborate on it." false "$tmp"
-    debian_sources="$tmp"
 
-    if [ "$CN" == true ]
-    then
-        tmp="$debian_secSources_CN"
-    else
-        tmp="$debian_secSources_ALL"
-    fi
-    info "Secure APT software repository" "The security update repository for Debian will be the platform where security updates are released." false "$tmp"
-    debian_secSources="$tmp"
+ufw allow from 173.245.48.0/20 to any port 443 proto tcp
+ufw allow from 103.21.244.0/22 to any port 443 proto tcp
+ufw allow from 103.22.200.0/22 to any port 443 proto tcp
+ufw allow from 103.31.4.0/22 to any port 443 proto tcp
+ufw allow from 141.101.64.0/18 to any port 443 proto tcp
+ufw allow from 108.162.192.0/18 to any port 443 proto tcp
+ufw allow from 190.93.240.0/20 to any port 443 proto tcp
+ufw allow from 188.114.96.0/20 to any port 443 proto tcp
+ufw allow from 197.234.240.0/22 to any port 443 proto tcp
+ufw allow from 198.41.128.0/17 to any port 443 proto tcp
+ufw allow from 162.158.0.0/15 to any port 443 proto tcp
+ufw allow from 104.16.0.0/13 to any port 443 proto tcp
+ufw allow from 104.24.0.0/14 to any port 443 proto tcp
+ufw allow from 172.64.0.0/13 to any port 443 proto tcp
+ufw allow from 131.0.72.0/22 to any port 443 proto tcp
 
-    info "NetMode" "Is the server capable of acquiring an IP address through DHCP? [d/DHCP/s/static]" false "$debian_netmode"
-    if [ "$tmp" == d ] || [ "$tmp" == DHCP ]
-    then
-        debian_netmode=DHCP
-    else
-        debian_netmode=static
-    fi
+ufw allow from 2400:cb00::/32 to any port 443 proto tcp
+ufw allow from 2606:4700::/32 to any port 443 proto tcp
+ufw allow from 2803:f800::/32 to any port 443 proto tcp
+ufw allow from 2405:b500::/32 to any port 443 proto tcp
+ufw allow from 2405:8100::/32 to any port 443 proto tcp
+ufw allow from 2a06:98c0::/29 to any port 443 proto tcp
+ufw allow from 2c0f:f248::/32 to any port 443 proto tcp
 
-    if [ "$debian_netmode" == DHCP ]
-    then
-        info "DHCPv4" "Enable DHCP for IPv4. [t/f]" false "$debian_DHCP_IPv4"
-        if [ "$tmp" == true ] || [ "$tmp" == t ]
-        then
-            debian_DHCP_IPv4=true
-        else
-            debian_DHCP_IPv4=false
-        fi
-
-        info "DHCPv4" "Enable DHCP for IPv6. [t/f]" false "$debian_DHCP_IPv6"
-        if [ "$tmp" == true ] || [ "$tmp" == t ]
-        then
-            debian_DHCP_IPv6=true
-        else
-            debian_DHCP_IPv6=false
-        fi
-
-        if [ "$debian_DHCP_IPv4" == false ] && [ "$debian_DHCP_IPv6" == false ]
-        then
-            echo "Failure to enable either DHCPv4 or DHCPv6 during configuration will result in the inability to connect to the server via SSH after reinstallation."
-            gOut 1
-        fi
-    fi
-
-    if [ "$debian_netmode" == static ]
-    then
-        info "IP" "The IP address of the server. Please separate multiple IP addresses with spaces (including both IPv4 and IPv6). Such as [1.1.1.1/32 2606:4700::1111/128]" false "${debian_static_IP[*]}"
-        debian_static_IP=( "$tmp" )
-
-        unset tmp
-        info "IPv4 Gateway" "All IPv4 traffic will be routed to the gateway." true "$debian_static_gateway4"
-        if [ "$tmp" ]
-        then
-            debian_static_gateway4="$tmp"
-        fi
-
-        unset tmp
-        info "IPv6 Gateway" "All IPv6 traffic will be routed to the gateway." true "$debian_static_gateway6"
-        if [ "$tmp" ]
-        then
-            debian_static_gateway6="$tmp"
-        fi
-
-        if ! [ "$debian_static_gateway4" ] && ! [ "$debian_static_gateway6" ]
-        then
-            echo "It is imperative that you set up either an IPv4 or an IPv6 gateway, as not doing so will render your server unable to connect to the network."
-            gOut 1
-        fi
-    fi
-
-    info "DNS" "Please separate multiple IP addresses with spaces (including both IPv4 and IPv6)." false "$debian_DNS"
-    debian_DNS="$tmp"
 fi
 
-if [ "$system" == debian ]
-then
-    if [ "$debian_netmode" == DHCP ]
-    then
-        bash <(curl -L -q --retry 5 --retry-delay 10 --retry-max-time 60 'https://raw.githubusercontent.com/AsenHu/Note/main/LXC_DABian_Reinstall.sh') "$name" "$pass" bookworm "$debian_sources" "$debian_secSources" "$CFIP" "$key" "$port" "$debian_netmode" "$debian_DHCP_IPv4" "$debian_DHCP_IPv6" "$debian_DNS"
-    fi
+echo "================================================================"
+echo -e "Finish."
+echo -e "You are setting username : ${user}"
+echo -e "You are setting password : $password for ${user}"
+echo -e "You are setting port : $port"
+echo -e "The firewall is enabled, please change the port after this session ends."
+echo -e "Use 'reboot' to finish installation."
 
-    if [ "$debian_netmode" == static ]
-    then
-        bash <(curl -L -q --retry 5 --retry-delay 10 --retry-max-time 60 'https://raw.githubusercontent.com/AsenHu/Note/main/LXC_DABian_Reinstall.sh') "$name" "$pass" bookworm "$debian_sources" "$debian_secSources" "$CFIP" "$key" "$port" "$debian_netmode" "${debian_static_IP[*]}" "$debian_static_gateway4" "$debian_static_gateway6" "$debian_DNS"
-    fi
-fi
+# 开启防火墙
+echo y | ufw enable
