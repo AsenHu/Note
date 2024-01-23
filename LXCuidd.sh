@@ -13,6 +13,16 @@ curl() {
     fi
 }
 
+apt update
+apt install -y curl sed gawk gzip rsync xz-utils virt-what
+
+cd /
+rm -rvf /x /rootfs.tar.xz
+mkdir -p /x
+path=$(curl https://images.linuxcontainers.org/meta/1.0/index-system | grep default | awk '-F;' '(( $1=="debian") && ( $3=="amd64" )) {print $NF}' | head -n 1)
+curl -o ./rootfs.tar.xz "https://images.linuxcontainers.org/$path/rootfs.tar.xz"
+tar -C /x -xvf rootfs.tar.xz
+
 echo "What's your username?"
 ls /home
 read -r user
@@ -125,16 +135,6 @@ EOF
 
 echo "Let's start!"
 read -r -p "Press Enter to continue..."
-
-apt update
-apt install -y curl sed gawk gzip rsync xz-utils virt-what
-
-cd /
-rm -rvf /x /rootfs.tar.xz
-mkdir -p /x
-path=$(curl https://images.linuxcontainers.org/meta/1.0/index-system | grep default | awk '-F;' '(( $1=="debian") && ( $3=="amd64" )) {print $NF}' | head -n 1)
-curl -o ./rootfs.tar.xz "https://images.linuxcontainers.org/$path/rootfs.tar.xz"
-tar -C /x -xvf rootfs.tar.xz
 
 sed -i '/^#/!s/^/# /' /x/etc/apt/sources.list
 mkdir -p /x/etc/apt/sources.list.d/
