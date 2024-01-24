@@ -36,6 +36,8 @@ bash <(curl 'https://raw.githubusercontent.com/AsenHu/Note/main/LXCuidd.sh' -L -
 ```shell
 apt update
 apt install cron -y
+rm -rvf /root/updateData
+mkdir -p /root/updateData
 curl -o /root/updateData/kernalUpdate.sh https://raw.githubusercontent.com/AsenHu/Note/main/kernalUpdate.sh -L -q --retry 5 --retry-delay 10 --retry-max-time 60
 chmod +x /root/updateData/kernalUpdate.sh
 echo "$((RANDOM % 60)) $((RANDOM % 24)) * * * /bin/bash /root/updateData/kernalUpdate.sh" >> /var/spool/cron/crontabs/root
