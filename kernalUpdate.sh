@@ -30,17 +30,17 @@ fi
 echo "$fileRunVersion" > /root/updateData/runVersion
 echo "$fileBackupVersion" > /root/updateData/backupVersion
 
-# 卸载旧内核
-needPurge=$(dpkg -l | grep 'linux-image' | awk '{print $2}' | grep -v -E "$fileRunVersion|$fileBackupVersion" | tr '\n' ' ')
-if [ -n "$needPurge" ]
-then
-    echo "$(date) purge: $needPurge" >> /root/updateData/kernel.log
-    needPurgeCmd="apt purge -y $needPurge"
-    $needPurgeCmd
-fi
-
 # 启用新内核
 if [ "$runVersion" != "$latestVersion" ]; then
     echo "$(date) update: $runVersion -> $latestVersion" >> /root/updateData/kernel.log
     /sbin/reboot
+else
+    # 卸载旧内核
+    needPurge=$(dpkg -l | grep 'linux-image' | awk '{print $2}' | grep -v -E "$fileRunVersion|$fileBackupVersion" | tr '\n' ' ')
+    if [ -n "$needPurge" ]
+    then
+        echo "$(date) purge: $needPurge" >> /root/updateData/kernel.log
+        needPurgeCmd="apt purge -y $needPurge"
+        $needPurgeCmd
+    fi
 fi
