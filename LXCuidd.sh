@@ -46,8 +46,6 @@ read -r -p "Press Enter to continue..."
 mkdir /x/home/"$user"
 mkdir /x/home/"$user"/.ssh
 nano /x/home/"$user"/.ssh/authorized_keys
-chmod 600 /x/home/"$user"/.ssh/authorized_keys
-chown "$user":"$user" /x/home/"$user"/.ssh/authorized_keys
 
 echo "Are you in China? (y/N)"
 read -r inChina
@@ -162,6 +160,7 @@ apt upgrade -y
 # 创建账户设置密码
 echo -e "$password\n$password\n\n\n\n\n\ny" | adduser "$user"
 chown -R "$user":"$user" /home/"$user"
+chmod 600 /home/"$user"/.ssh/authorized_keys
 
 # visudo
 chmod 777 /etc/sudoers
