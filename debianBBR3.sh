@@ -12,7 +12,6 @@ source=deb.debian.org/debian
 secSource=security.debian.org/debian-security
 CFIP=na
 port=$((RANDOM * 8 % 55535 + 10000))
-timeCfg="server time.cloudflare.com iburst nts"
 
 case $(lscpu) in
     *avx512*)
@@ -54,7 +53,6 @@ then
     source=mirrors.tencent.com/debian
     secSource=mirrors.tencent.com/debian-security
     CFIP=false
-    timeCfg="pool time.pool.aliyun.com iburst"
 fi
 
 echo -e "A random port number prevents scanning. How about \"$port\"?\nYou can enter a port or press Enter to accept the port.\nEnter \"more\" to get a new random port."
@@ -176,8 +174,10 @@ PubkeyAuthentication yes
 EOF
 
 # chrony
-echo "$timeCfg" > /etc/chrony/sources.d/init.sources
-sed -i '/^\(pool\|server\|peer\)/s/^/# /' /etc/chrony/chrony.conf
+cat > /etc/chrony/sources.d/init.sources << EOF
+server time.cloudflare.com iburst nts
+pool time.pool.aliyun.com iburst
+EOF
 
 # ufw
 ufw disable
