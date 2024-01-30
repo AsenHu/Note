@@ -122,7 +122,7 @@ EOF
 ip a
 ip route
 ip -6 route
-} > /etc/netplan/01-netcfg.yaml
+} >> /etc/netplan/01-netcfg.yaml
 sed -i 's/^/# /' /etc/netplan/01-netcfg.yaml
 read -r -p "Press Enter to continue..."
 nano /etc/netplan/01-netcfg.yaml
