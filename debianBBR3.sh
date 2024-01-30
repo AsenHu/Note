@@ -91,7 +91,7 @@ then
 fi
 
 echo "Let's set your netplan!"
-mkdir /etc/netplan
+mkdir -p /etc/netplan
 {
     cat <<EOF
 network:
