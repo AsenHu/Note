@@ -142,7 +142,7 @@ deb-src http://$source/ bookworm main contrib non-free non-free-firmware
 deb-src http://$secSource/ bookworm-security main contrib non-free non-free-firmware
 deb-src http://$source/ bookworm-updates main contrib non-free non-free-firmware
 EOF
-apt update && apt install chrony sudo gpg curl openvswitch-switch ca-certificates netplan.io ufw systemd-resolved -y && apt upgrade -y
+apt update && apt install chrony sudo gpg curl openvswitch-switch ca-certificates netplan.io ufw systemd-resolved -y
 curl https://dl.xanmod.org/archive.key | gpg --dearmor -o /usr/share/keyrings/xanmod-archive-keyring.gpg
 echo 'deb [signed-by=/usr/share/keyrings/xanmod-archive-keyring.gpg] http://deb.xanmod.org releases main' | tee /etc/apt/sources.list.d/xanmod-release.list
 apt update && apt install linux-xanmod-x64v$microArch -y
