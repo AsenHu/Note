@@ -134,7 +134,7 @@ read -r -p "Press Enter to continue..."
 
 sed -i '/^#/!s/^/# /' /etc/apt/sources.list
 mkdir -p /etc/apt/sources.list.d/
-cat >> /etc/apt/sources.list.d/init-sources.list << EOF
+cat > /etc/apt/sources.list.d/init-sources.list << EOF
 deb http://$source/ bookworm main contrib non-free non-free-firmware
 deb http://$secSource/ bookworm-security main contrib non-free non-free-firmware
 deb http://$source/ bookworm-updates main contrib non-free non-free-firmware
@@ -151,7 +151,7 @@ netplan apply
 
 # 开启 bbr 和 TFO
 mkdir -p /etc/sysctl.d
-cat >> /etc/sysctl.d/01-bbr_tfo.conf << EOF
+cat > /etc/sysctl.d/01-bbr_tfo.conf << EOF
 net.core.default_qdisc=fq_pie
 net.ipv4.tcp_congestion_control=bbr
 net.ipv4.tcp_fastopen=3
