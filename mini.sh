@@ -1,5 +1,12 @@
 #!/bin/bash
 
+mirrors=deb.debian.org/debian
+
+if [ "$1" == cn ]
+then
+    mirrors=mirrors.tencent.com/debian
+fi
+
 curl() {
     # Copy from https://github.com/XTLS/Xray-install
     if ! $(type -P curl) -L -q --retry 5 --retry-delay 10 --retry-max-time 60 "$@";then
@@ -20,7 +27,7 @@ if [ -f "$1" ]
 then
     mv -f "$1" /mini.iso
 else
-    curl -o /mini.iso https://deb.debian.org/debian/dists/bookworm/main/installer-amd64/current/images/netboot/mini.iso
+    curl -o /mini.iso https://$mirrors/dists/bookworm/main/installer-amd64/current/images/netboot/mini.iso
 fi
 
 mkdir -p /x
