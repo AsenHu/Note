@@ -160,7 +160,7 @@ EOF
 # 系统自动更新与内核自动卸载
 rm -rvf /root/updateData
 mkdir -p /root/updateData
-curl -o /root/updateData/kernalUpdate.sh https://raw.githubusercontent.com/AsenHu/Note/main/kernalUpdate.sh -L -q --retry 5 --retry-delay 10 --retry-max-time 60
+curl -o /root/updateData/kernalUpdate.sh https://raw.githubusercontent.com/AsenHu/Note/main/kernalUpdate.sh
 chmod +x /root/updateData/kernalUpdate.sh
 echo "$((RANDOM % 60)) $((RANDOM % 24)) * * * /bin/bash /root/updateData/kernalUpdate.sh" >> /var/spool/cron/crontabs/root
 
