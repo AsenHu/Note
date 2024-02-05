@@ -157,13 +157,6 @@ net.ipv4.tcp_congestion_control=bbr
 net.ipv4.tcp_fastopen=3
 EOF
 
-# 系统自动更新与内核自动卸载
-rm -rvf /root/updateData
-mkdir -p /root/updateData
-curl -o /root/updateData/kernalUpdate.sh https://raw.githubusercontent.com/AsenHu/Note/main/kernalUpdate.sh
-chmod +x /root/updateData/kernalUpdate.sh
-echo "$((RANDOM % 60)) $((RANDOM % 24)) * * * /bin/bash /root/updateData/kernalUpdate.sh" >> /var/spool/cron/crontabs/root
-
 # ssh
 mkdir -p /etc/ssh/sshd_config.d
 cat > /etc/ssh/sshd_config.d/01-init.conf << EOF
@@ -217,3 +210,10 @@ ufw allow from 2c0f:f248::/32 to any port 443 proto tcp
 fi
 
 echo y | ufw enable
+
+# 系统自动更新与内核自动卸载
+rm -rvf /root/updateData
+mkdir -p /root/updateData
+curl -o /root/updateData/kernalUpdate.sh https://raw.githubusercontent.com/AsenHu/Note/main/kernalUpdate.sh
+chmod +x /root/updateData/kernalUpdate.sh
+echo "$((RANDOM % 60)) $((RANDOM % 24)) * * * /bin/bash /root/updateData/kernalUpdate.sh" >> /var/spool/cron/crontabs/root
