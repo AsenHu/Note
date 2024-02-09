@@ -105,6 +105,7 @@ network:
             routes:
                 - to: default
                   via: 5.6.7.8
+                  on-link: true
                 - to: default
                   via: 5::5
                   on-link: true
