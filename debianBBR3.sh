@@ -50,8 +50,8 @@ read -r inChina
 if [ "$inChina" = "y" ]
 then
     echo "Setting up mirrors..."
-    source=mirrors.tencent.com/debian
-    secSource=mirrors.tencent.com/debian-security
+    source=mirrors.ustc.edu.cn/debian
+    secSource=mirrors.ustc.edu.cn/debian-security
     CFIP=false
 fi
 
