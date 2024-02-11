@@ -40,7 +40,7 @@ apt install cron -y
 mkdir -p /root/updateData
 curl -o /root/updateData/kernalUpdate.sh https://raw.githubusercontent.com/AsenHu/Note/main/kernalUpdate.sh -L -q --retry 5 --retry-delay 10 --retry-max-time 60
 chmod +x /root/updateData/kernalUpdate.sh
-echo "$((RANDOM % 60)) $((RANDOM % 24)) * * * /bin/bash /root/updateData/kernalUpdate.sh" >> /var/spool/cron/crontabs/root
+echo "$((RANDOM % 60)) $((RANDOM % 24)) * * * /bin/bash -x /root/updateData/kernalUpdate.sh > /root/updateData/lastCheck.log 2>&1" >> /var/spool/cron/crontabs/root
 ```
 
 # 获取一个一天中随机一个时间的 crontab
