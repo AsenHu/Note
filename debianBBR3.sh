@@ -152,10 +152,12 @@ netplan apply
 
 # 开启 bbr 和 TFO
 mkdir -p /etc/sysctl.d
-cat > /etc/sysctl.d/01-bbr_tfo.conf << EOF
-net.core.default_qdisc=fq_pie
-net.ipv4.tcp_congestion_control=bbr
-net.ipv4.tcp_fastopen=3
+cat > /etc/sysctl.d/99-network.conf << EOF
+net.ipv4.tcp_fastopen = 3
+net.ipv4.tcp_tw_reuse = 1
+net.ipv4.tcp_mtu_probing = 1
+net.core.default_qdisc = fq_pie
+net.ipv4.tcp_congestion_control = bbr
 EOF
 
 # ssh
