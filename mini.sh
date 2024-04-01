@@ -47,4 +47,4 @@ EOF
 } > /boot/grub/grub.cfg
 
 clear
-echo -e "Use 'reboot' to start installation.\nAfter reboot, continue installation in the VNC.\nThe original grub is in /boot/grub/grub.cfg.bak\nWhen the memory is less than 384 MB, you may need to replace the appropriate initrd."
+echo -e "Use 'reboot' to start installation.\nAfter reboot, continue installation in the VNC.\nThe original grub is in /boot/grub/grub.cfg.bak\nWhen the memory is less than 384 MiB, you may need to replace the appropriate initrd."
