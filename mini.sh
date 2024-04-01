@@ -35,6 +35,7 @@ mount -o loop /mini.iso /x
 
 uuid=$(dir_to_uuid /)
 
+mv /boot/grub/grub.cfg /boot/grub/grub.cfg.bak
 {
     cat << EOF
 search --no-floppy --set=root --fs-uuid $uuid
@@ -46,4 +47,4 @@ EOF
 } > /boot/grub/grub.cfg
 
 clear
-echo -e "Use 'reboot' to start installation.\nAfter reboot, continue installation in the VNC."
+echo -e "Use 'reboot' to start installation.\nAfter reboot, continue installation in the VNC.\nThe original grub is in /boot/grub/grub.cfg.bak\nWhen the memory is less than 384 MB, you may need to replace the appropriate initrd."
