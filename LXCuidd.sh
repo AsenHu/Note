@@ -149,7 +149,7 @@ deb-src http://$source/ bookworm-updates main contrib non-free non-free-firmware
 EOF
 
 rsync -a -v --delete-after --ignore-times --exclude="/dev" --exclude="/proc" --exclude="/sys" --exclude="/x" --exclude="/run" /x/* /
-rm -rvf /x
+rm -rvf /x /rootfs.tar.xz
 
 echo -e "$password\n$password\n" | passwd
 
