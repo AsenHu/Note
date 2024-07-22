@@ -79,8 +79,9 @@ echo "Set your public key for SSH."
 read -r -p "Press Enter to continue..."
 mkdir /home/"$user"/.ssh
 nano /home/"$user"/.ssh/authorized_keys
+chmod 700 /home/"$user"/.ssh
 chmod 600 /home/"$user"/.ssh/authorized_keys
-chown "$user":"$user" /home/"$user"/.ssh/authorized_keys
+chown "$user":"$user" /home/"$user"/.ssh -R
 
 echo "Are you in China? (y/n)"
 read -r inChina
