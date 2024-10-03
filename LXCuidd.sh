@@ -95,29 +95,29 @@ mkdir /x/etc/netplan
 {
     cat <<EOF
 network:
-    version: 2
-    renderer: networkd
-    ethernets:
-        eth0:
-            addresses:
-                - 1.2.3.4/24
-                - 1::1/64
-            routes:
-                - to: default
-                  via: 5.6.7.8
-                - to: default
-                  via: 5::5
-                  on-link: true
-            dhcp4: true
-            dhcp6: true
-            accept-ra: true
-            ipv6-privacy: true
-            nameservers:
-                addresses:
-                    - 1.1.1.1
-                    - 2606:4700:4700::1111
-                    - 223.5.5.5
-                    - 2400:3200::1
+  version: 2
+  renderer: networkd
+  ethernets:
+    eth0:
+      addresses:
+        - 1.2.3.4/24
+        - 1::1/64
+      routes:
+        - to: default
+          via: 5.6.7.8
+        - to: default
+          via: 5::5
+          on-link: true
+      dhcp4: true
+      dhcp6: true
+      accept-ra: true
+      ipv6-privacy: true
+      nameservers:
+        addresses:
+          - 1.1.1.1
+          - 2606:4700:4700::1111
+          - 223.5.5.5
+          - 2400:3200::1
 EOF
 ip a
 ip route
@@ -185,6 +185,13 @@ echo y | ufw reset
 ufw default allow outgoing
 ufw default deny incoming
 ufw allow "$port"/tcp
+
+# 全锥
+
+range=$(sysctl -n net.ipv4.ip_local_port_range)
+start_port=$(echo $range | cut -d ' ' -f 1)
+end_port=$(echo $range | cut -d ' ' -f 2)
+sudo ufw allow "$start_port:$end_port/udp"
 
 # 放行 Cloudflare
 
