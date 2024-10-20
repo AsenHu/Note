@@ -6,7 +6,7 @@
 Arch Linux 一键 VNC 全手动安装
 
 ```shell
-bash <(curl https://raw.githubusercontent.com/AsenHu/Note/main/mini.sh -L -q --retry 5 --retry-delay 10 --retry-max-time 60)
+bash <(curl https://raw.githubusercontent.com/AsenHu/Note/refs/heads/main/archlinux.sh -L -q --retry 5 --retry-delay 10 --retry-max-time 60)
 ```
 
 类似 `mini.sh`，只是把 Debian 换成了 Arch
