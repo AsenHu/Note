@@ -1,6 +1,18 @@
 # Note
 一个 Bash 笔记本
 
+# archlinux.sh
+
+Arch Linux 一键 VNC 全手动安装
+
+```shell
+bash <(curl https://raw.githubusercontent.com/AsenHu/Note/main/mini.sh -L -q --retry 5 --retry-delay 10 --retry-max-time 60)
+```
+
+类似 `mini.sh`，只是把 Debian 换成了 Arch
+
+这两个脚本可以传入一个参数，当参数是 cn 时使用国内源（中科大或清华），反之用海外的 CDN 源。其中，Arch 的你可以直接传入源的 domain 来自定义你想用的源。
+
 # mini.sh
 
 Debian 12 一键 VNC 全手动安装
