@@ -158,7 +158,7 @@ deb-src http://$mirror/debian bookworm-updates main contrib non-free non-free-fi
 EOF
 
 # 安装软件包
-apt update && apt install chrony sudo gpg curl ca-certificates -y
+apt update && apt install chrony sudo gpg curl ca-certificates openssh-server -y
 
 # 更换内核
 curl https://dl.xanmod.org/archive.key | gpg --dearmor -o /usr/share/keyrings/xanmod-archive-keyring.gpg || xanmodKey | gpg --dearmor -o /usr/share/keyrings/xanmod-archive-keyring.gpg
