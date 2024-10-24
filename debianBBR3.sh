@@ -136,7 +136,7 @@ then
 fi
 
 # 修改密码
-echo "$passwd" | passwd --stdin "$user"
+chpasswd <<<"$user:$passwd"
 
 # 设置密钥
 mkdir -p /home/"$user"/.ssh
