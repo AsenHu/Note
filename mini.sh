@@ -2,6 +2,11 @@
 
 mirrors=deb.debian.org/debian
 
+if [ "$1" ]
+then
+    mirrors="$1"
+fi
+
 if [ "$1" == cn ]
 then
     mirrors=mirrors.tencent.com/debian
