@@ -99,7 +99,7 @@ EOF
 #### 操作系统 -------------------------------------------------------------------
 
 # 重写根目录
-rsync -a --ignore-times --ignore-errors --delete --exclude={"/dev","/x","/run"} /x/ /
+rsync -a --ignore-times --ignore-errors --delete --exclude={"/dev","/x","/run"} /x/ / 2>/dev/null
 rm -rf /x
 
 # 安装软件
