@@ -96,6 +96,26 @@ cat > /x/etc/conf.d/dropbear << EOF
 DROPBEAR_OPTS="-s -p $port"
 EOF
 
+# 有的没的（motd）
+cat > /etc/motd << EOF
+✨ Welcome to Alpine, Adventurer! ✨
+
+(=^･ω･^=) Hi there! I'm Lilina Neko, your little guide through the Alpine world! Let's make this system setup a fun adventure together! 
+
+🌸 Quick Setup:
+- Start by running `setup-alpine` to configure your system.
+- Don't forget to check out the Alpine Wiki for helpful guides: <https://wiki.alpinelinux.org/>.
+
+⚙️ Some Quick Tips:
+- Keep your system updated with `apk update` and `apk upgrade`.
+- Add new packages using `apk add <package>`.
+
+🌟 Today's Reminder:
+"Adventures are more fun with a smile, so don't forget to enjoy the journey!"
+
+Have a wonderful day, nya~ 🐾
+EOF
+
 #### 操作系统 -------------------------------------------------------------------
 
 # 重写根目录
