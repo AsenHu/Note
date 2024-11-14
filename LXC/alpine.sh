@@ -97,7 +97,7 @@ DROPBEAR_OPTS="-s -p $port"
 EOF
 
 # 有的没的（motd）
-cat > /etc/motd << EOF
+cat > /x/etc/motd << EOF
 ✨ Welcome to Alpine, Adventurer! ✨
 
 (=^･ω･^=) Hi there! I'm Lilina Neko, your little guide through the Alpine world! Let's make this system setup a fun adventure together! 
