@@ -35,6 +35,14 @@ bash <(curl https://raw.githubusercontent.com/AsenHu/Note/refs/heads/main/KVM/ar
 
 这两个脚本可以传入一个参数，当参数是 cn 时使用国内源（中科大或清华），反之用海外的 CDN 源。其中，Arch 的你可以直接传入源的 domain 来自定义你想用的源。
 
+### ultralite.sh
+
+适用于小内存服务器的 ArchISO
+
+```shell
+bash <(curl https://raw.githubusercontent.com/AsenHu/Note/refs/heads/main/KVM/ultralite.sh)
+```
+
 ### mini.sh
 
 Debian 12 一键 VNC 全手动安装
