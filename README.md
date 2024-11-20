@@ -43,6 +43,8 @@ bash <(curl https://raw.githubusercontent.com/AsenHu/Note/refs/heads/main/KVM/ar
 bash <(curl https://raw.githubusercontent.com/AsenHu/Note/refs/heads/main/KVM/ultralite.sh)
 ```
 
+如果你在安装系统，你需要在脚本执行完后手动加入 `copytoram=y`
+
 ### mini.sh
 
 Debian 12 一键 VNC 全手动安装
