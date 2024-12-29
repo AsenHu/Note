@@ -3,6 +3,13 @@
 
 ## LXC 脚本
 
+### archlinux
+
+```shell
+pacman -Syu curl
+bash <(curl https://raw.githubusercontent.com/AsenHu/Note/refs/heads/main/LXC/archlinux.sh)
+```
+
 ### alpine
 
 ```shell

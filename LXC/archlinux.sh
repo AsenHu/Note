@@ -1,16 +1,15 @@
 #!/bin/bash
 
-mkdir -p /tmp/LXCalpine
+mkdir -p /tmp/LXCarch
 
-apk update
-apk add curl gawk tar xz nano ca-certificates rsync
+pacman -Syu curl gawk tar xz nano ca-certificates rsync
 
 clear
 
 #### 问卷收集信息 ----------------------------------------------------------------
 
 # 生成问卷文件
-cat > /tmp/LXCalpine/questionnaire.toml << EOF
+cat > /tmp/LXCarch/questionnaire.toml << EOF
 # Please enter your password
 # passwd = "NekoIsTheBest"
 passwd = ""
@@ -26,23 +25,23 @@ port = $((RANDOM * 8 % 55535 + 10000))
 
 # Please enter mirrors
 # You can choose from the following mirrors or enter your own:
-# dl-cdn.alpinelinux.org
+# mirrors.kernel.org
 # mirrors.tuna.tsinghua.edu.cn
 # mirrors.ustc.edu.cn
 # mirrors.tencent.com
 # mirrors.aliyun.com
 # mirrors.cloud.aliyuncs.com !!!!Intranet Source!!!!
 # mirrors.tencentyun.com !!!!Intranet Source!!!!
-mirror = "dl-cdn.alpinelinux.org"
+mirror = "https://cloudflaremirrors.com/archlinux"
 EOF
 
 # 打开问卷供用户编辑
-nano /tmp/LXCalpine/questionnaire.toml
+nano /tmp/LXCarch/questionnaire.toml
 
 # 读取用户输入
-passwd=$(grep '^passwd = ' /tmp/LXCalpine/questionnaire.toml | cut -d'"' -f2)
-port=$(grep '^port = ' /tmp/LXCalpine/questionnaire.toml | cut -d' ' -f3)
-mirror=$(grep '^mirror = ' /tmp/LXCalpine/questionnaire.toml | cut -d'"' -f2)
+passwd=$(grep '^passwd = ' /tmp/LXCarch/questionnaire.toml | cut -d'"' -f2)
+port=$(grep '^port = ' /tmp/LXCarch/questionnaire.toml | cut -d' ' -f3)
+mirror=$(grep '^mirror = ' /tmp/LXCarch/questionnaire.toml | cut -d'"' -f2)
 
 # 验证用户输入
 if [ -z "$passwd" ] || [ -z "$mirror" ]; then
@@ -51,7 +50,7 @@ if [ -z "$passwd" ] || [ -z "$mirror" ]; then
 fi
 
 # 提取多行密钥
-key=$(sed -n '/^key = """$/,/^"""$/p' /tmp/LXCalpine/questionnaire.toml | sed '1d;$d' | sed '/^#/d')
+key=$(sed -n '/^key = """$/,/^"""$/p' /tmp/LXCarch/questionnaire.toml | sed '1d;$d' | sed '/^#/d')
 
 # 验证端口
 if ! [[ "$port" =~ ^[0-9]+$ ]] || [ "$port" -lt 1 ] || [ "$port" -gt 65535 ]; then
@@ -76,28 +75,28 @@ curl() {
 # 准备目录
 rm -rf /x /rootfs.tar.xz
 mkdir -p /x
-path=$(curl https://images.linuxcontainers.org/meta/1.0/index-system | awk '-F;' '(( $1=="alpine") && ( $2!="edge" ) && ( $3=="amd64" ) && ( $4=="default")) {print $NF}' | tail -n 1)
+path=$(curl https://images.linuxcontainers.org/meta/1.0/index-system | awk '-F;' '(( $1=="archlinux") && ( $3=="amd64" ) && ( $4=="default")) {print $NF}' | tail -n 1)
 curl -o /rootfs.tar.xz "https://images.linuxcontainers.org/$path/rootfs.tar.xz"
 tar -C /x -xf /rootfs.tar.xz
 
 # 配置网络
-cat /etc/network/interfaces > /x/etc/network/interfaces
 cat /etc/resolv.conf > /x/etc/resolv.conf
 
 # 配置源
-cat << EOF > /x/etc/apk/repositories
-http://$mirror/alpine/edge/main
-http://$mirror/alpine/edge/community
+cat << EOF > /etc/pacman.d/mirrorlist
+Server = http://$mirror/\$repo/os/\$arch
 EOF
 
 # SSH
-mkdir -p /x/etc/conf.d
-cat > /x/etc/conf.d/dropbear << EOF
-DROPBEAR_OPTS="-s -p $port"
+mkdir -p /x/etc/systemd/system/dropbear.service.d
+cat > /x/etc/systemd/system/dropbear.service.d/SSH.conf << EOF
+[Service]
+ExecStart=
+ExecStart=/usr/bin/dropbear -F -P /run/dropbear.pid -R -s -p $port
 EOF
 
 # 有的没的（motd）
-echo -e "✨ Welcome to Alpine, Adventurer! ✨\n\n(=^･ω･^=) Hi there! I'm Lilina Neko, your little guide through the Alpine world! Let's make this system setup a fun adventure together!\n\n🌸 Quick Setup:\n- Start by running \`setup-alpine\` to configure your system.\n- Don't forget to check out the Alpine Wiki for helpful guides: <https://wiki.alpinelinux.org/>\n\n⚙️ Some Quick Tips:\n- Keep your system updated with \`apk update\` and \`apk upgrade\`.\n- Add new packages using \`apk add <package>\`.\n\n🌟 Today's Reminder:\n\"Adventures are more fun with a smile, so don't forget to enjoy the journey!\"\n\nHave a wonderful day, nya~ 🐾" > /x/etc/motd
+echo -e "✨ Welcome to Arch Linux, Adventurer! ✨\n\n(=^･ω･^=) Hi there! I'm Lilina Neko, your little guide through the Arch world! Let's make this system setup a fun adventure together!\n\n🌸 Quick Setup:\n- Need help? The Arch Wiki is your best friend: <https://wiki.archlinux.org/>\n- Keep your system updated with \`sudo pacman -Syu\`.\n\n⚙️ Some Quick Tips:\n- Install new packages using \`sudo pacman -S <package>\`.\n- Remove unnecessary packages with \`sudo pacman -R <package>\`.\n\n🌟 Today's Reminder:\n\"Arch Linux is as powerful as your curiosity! Keep exploring and enjoy the journey!\"\n\nHave a wonderful day, nya~ 🐾" > /x/etc/motd
 
 #### 操作系统 -------------------------------------------------------------------
 
@@ -106,12 +105,10 @@ rsync -a --ignore-times --ignore-errors --delete --exclude={"/dev","/x","/run"} 
 rm -rf /x
 
 # 安装软件
-apk update
-apk add --no-cache dropbear
-apk upgrade
+pacman -Syu dropbear
 
 # SSH 服务
-rc-update add dropbear
+systemctl enable dropbear
 
 # 修改密码
 echo "root:$passwd" | chpasswd
