@@ -47,7 +47,7 @@ passwd=$(grep '^passwd = ' /tmp/LXCarch/questionnaire.toml | cut -d'"' -f2)
 port=$(grep '^port = ' /tmp/LXCarch/questionnaire.toml | cut -d' ' -f3)
 
 # 验证用户输入
-if [ -z "$passwd" ] || [ -z "$mirror" ]; then
+if [ -z "$passwd" ]; then
     echo "Some required fields are missing. Please fill out the questionnaire completely."
     exit 1
 fi
