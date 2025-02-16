@@ -20,12 +20,23 @@ key = """
 # comment will be remove automatically
 """
 
-# Please enter mirrors (multi-line supported, place your mirrorlist between the markers)
+# Please enter a port number for SSH
+port = $((RANDOM * 8 % 55535 + 10000))
+
+# Please enter mirrors
+# You can choose from the following mirrors or enter your own:
+# mirrors.kernel.org
+# mirrors.tuna.tsinghua.edu.cn
+# mirrors.ustc.edu.cn
+# mirrors.tencent.com
+# mirrors.aliyun.com
+# mirrors.cloud.aliyuncs.com !!!!Intranet Source!!!!
+# mirrors.tencentyun.com !!!!Intranet Source!!!!
+# multi-line supported, place your mirrorlist between the markers
 mirror = """
 # Server = http://mirrors.kernel.org/archlinux/\$repo/os/\$arch
 # CacheServer = http://mirrors.kernel.org/archlinux/\$repo/os/\$arch
 """
-
 EOF
 
 # 打开问卷供用户编辑
@@ -35,17 +46,17 @@ nano /tmp/LXCarch/questionnaire.toml
 passwd=$(grep '^passwd = ' /tmp/LXCarch/questionnaire.toml | cut -d'"' -f2)
 port=$(grep '^port = ' /tmp/LXCarch/questionnaire.toml | cut -d' ' -f3)
 
-# 提取多行密钥
-key=$(sed -n '/^key = """$/,/^"""$/p' /tmp/LXCarch/questionnaire.toml | sed '1d;$d' | sed '/^#/d')
-
-# 提取多行镜像
-mirror=$(sed -n '/^mirror = """$/,/^"""$/p' /tmp/LXCarch/questionnaire.toml | sed '1d;$d' | sed '/^#/d')
-
 # 验证用户输入
 if [ -z "$passwd" ] || [ -z "$mirror" ]; then
     echo "Some required fields are missing. Please fill out the questionnaire completely."
     exit 1
 fi
+
+# 提取多行密钥
+key=$(sed -n '/^key = """$/,/^"""$/p' /tmp/LXCarch/questionnaire.toml | sed '1d;$d' | sed '/^#/d')
+
+# 提取多行镜像
+mirror=$(sed -n '/^mirror = """$/,/^"""$/p' /tmp/LXCarch/questionnaire.toml | sed '1d;$d' | sed '/^#/d')
 
 # 验证端口
 if ! [[ "$port" =~ ^[0-9]+$ ]] || [ "$port" -lt 1 ] || [ "$port" -gt 65535 ]; then
@@ -78,9 +89,7 @@ tar -C /x -xf /rootfs.tar.xz
 cat /etc/resolv.conf > /x/etc/resolv.conf
 
 # 配置源
-cat << EOF > /etc/pacman.d/mirrorlist
-$mirror
-EOF
+echo "$mirror" > /x/etc/pacman.d/mirrorlist
 
 # SSH
 mkdir -p /x/etc/systemd/system/dropbear.service.d
@@ -100,6 +109,7 @@ rsync -a --ignore-times --ignore-errors --delete --exclude={"/dev","/x","/run"} 
 rm -rf /x
 
 # 安装软件
+pacman -Sy archlinux-keyring
 pacman-key --init
 pacman-key --populate
 pacman -Syu dropbear
