@@ -186,4 +186,9 @@ menuentry '[loopback]archlinux-2023.10.14-x86_64.iso' {
 }
 ```
 
+```sh
+# 修改生成菜单的配置文件后，再次生成 grub.cfg 启动菜单
+grub-mkconfig -o /boot/grub/grub.cfg
+```
+
 - [ ] 检查云服务商的自动备份/快照并开启
