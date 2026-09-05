@@ -97,6 +97,24 @@ systemctl enable systemd-timesyncd systemd-networkd systemd-resolved sshd
 ```
 
 ```conf
+# https://man.archlinux.org/man/systemd.network.5#%5BROUTE%5D_SECTION_OPTIONS
+
+# Takes the gateway address or the special values "_dhcp4" and "_ipv6ra".
+# If "_dhcp4" or "_ipv6ra" is set, then the gateway address provided by DHCPv4
+# or IPv6 RA is used. When"_dhcp4", the acquired DHCPv4 address will be used as
+# the preferred source address of the route, unless it is explicitly configured
+# in PreferredSource=.
+
+# Added in version 211.
+
+[Route]
+Gateway=_ipv6ra
+
+[Route]
+Gateway=_dhcp4
+```
+
+```conf
 # https://wiki.archlinux.org/title/Systemd-networkd#Configuration_files
 # /etc/systemd/network/99-def.network
 [Match]
